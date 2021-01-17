@@ -3,49 +3,14 @@
 ///
 /// Math functions
 ///
+const DIGITS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
 function randomDigit() {
-  return Math.floor(9 * Math.random()) + 1;
+  return DIGITS[Math.floor(DIGITS.length * Math.random())];
 }
 
-const PRIMES = [2, 3, 5, 7];
-
-function factor(n) {
-  let powers = [0, 0, 0, 0];
-  for (let i in PRIMES) {
-    while (n % PRIMES[i] == 0) {
-      n /= PRIMES[i];
-      powers[i] += 1;
-    }
-  }
-  return powers;
-}
-
-function unfactor(powers) {
-  return powers.map((x, i) => Math.pow(PRIMES[i], x)).reduce((a, b) => a*b);
-}
-
-function htmlize(powers) {
-  return possibleDigits(powers).join(" ");
-  //return `${powers[0]} ${powers[1]} ${powers[2]} ${powers[3]}`;
-}
-
-function possibleDigits(powers) {
-  let p = [];
-  for (let val0 = 0; val0 <= powers[0]; ++val0) {
-    for (let val1 = 0; val1 <= powers[1]; ++val1) {
-      for (let val2 = 0; val2 <= powers[2]; ++val2) {
-        for (let val3 = 0; val3 <= powers[3]; ++val3) {
-          let candidate = [val0, val1, val2, val3];
-          if (unfactor(candidate) > 9) {
-            continue;
-          }
-          p.push(candidate);
-        }
-      }
-    }
-  }
-
-  return p.map(unfactor);
+function possibleDigits(rowP, colP) {
+  return DIGITS.filter(x => (rowP % x == 0 && colP % x == 0));
 }
 
 function refineCandidates(candidateLists, target) {
@@ -131,6 +96,21 @@ class State {
     }
   }
 
+  refineToDivisors() {
+    for (let i in this.rowProd) {
+      for (let j in this.colProd) {
+        if (this.fixed[i][j]) {
+          this.candidates[i][j] = [ this.fixed[i][j] ];
+          continue;
+        }
+
+        this.candidates[i][j] = possibleDigits(this.rowProd[i], this.colProd[j]);
+      }
+    }
+
+    this.markFixed();
+  }
+
   refineRows() {
     for (let i in this.rowProd) {
       let candidateLists = this.candidates[i];
@@ -146,27 +126,6 @@ class State {
       let candidateLists = this.candidates.map(r => r[j]);
       refineCandidates(candidateLists, this.colProd[j])
         .forEach((candidates, i) => { this.candidates[i][j] = candidates});
-    }
-
-    this.markFixed();
-  }
-
-  refineToDivisors() {
-    let rowF = this.rowProd.map(c => factor(c));
-    let colF = this.colProd.map(c => factor(c));
-    let min = (a, b) => a.map((x, i) => Math.min(x, b[i]));
-
-    // Compute candidates
-    for (let i in this.rowProd) {
-      for (let j in this.colProd) {
-        if (this.fixed[i][j]) {
-          this.candidates[i][j] = [ this.fixed[i][j] ];
-          continue;
-        }
-
-        let powers = min(rowF[i], colF[j]);
-        this.candidates[i][j] = possibleDigits(powers);
-      }
     }
 
     this.markFixed();

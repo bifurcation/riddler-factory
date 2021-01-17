@@ -45,6 +45,7 @@ a.button {
     border: 1px solid #3c3c3c;
     display: inline-block;
     background-color: transparent;
+    margin: 0.5ex;
     padding: 1ex;
     width: 20ex;
     font-size: 12px;

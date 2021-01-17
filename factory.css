@@ -1,0 +1,38 @@
+@font-face {
+  font-family: 'DecimaMono';
+  src: url('decimamonopro-webfont.woff2');
+}
+
+@font-face {
+  font-family: 'AtlasGroteskWeb';
+  src: url('AtlasGrotesk-Regular-Web.woff2');
+}
+
+body {
+  font-family: DecimaMono, Consolas, Monaco, monospace;
+}
+
+/* Game table */
+table { border-collapse: collapse; }
+
+td {
+  padding: 1ex;
+  text-align: center;
+}
+
+table td + td.rowProd { border-left: 1px solid #3c3c3c; }
+
+table tr + tr.colProd { border-top: 1px solid #3c3c3c; }
+
+/* Buttons */
+a.button {
+    border: 1px solid #3c3c3c;
+    display: inline-block;
+    font-size: 12px;
+    background-color: transparent;
+    padding: 10px;
+    cursor: pointer;
+    font-family: AtlasGroteskWeb,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-decoration: none;
+    color: #3c3c3c;
+}
